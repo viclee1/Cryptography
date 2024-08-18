@@ -1,0 +1,13 @@
+#! /usr/bin/env python3
+import sys
+from decrypt import Decrypt
+
+if len(sys.argv) < 2 or len(sys.argv) > 2:
+        sys.exit(1)
+
+if __name__ == "__main__":
+    ciphertext = sys.argv[1]
+
+    decrypt = Decrypt(ciphertext)
+    trans = decrypt.process()
+    decrypt.print_stream(trans)

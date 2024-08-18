@@ -1,0 +1,35 @@
+#! /usr/bin/env python3
+import sys
+from decrypt import Decrypt
+
+if len(sys.argv) < 2 or len(sys.argv) > 2 :
+        sys.exit(1)
+
+if __name__ == "__main__":
+    decrypt = Decrypt(sys.argv[1])
+    trans = decrypt.process()
+    decrypt.print_stream(trans)
+
+    accounts = decrypt.get_accounts(trans)
+    next = next((k for k, v in accounts.items() if v == 1), None)
+
+    stream = decrypt.get_stream()
+    target = stream.index(next) + 1
+
+    replace = None
+    for i in range(len(stream)): 
+        if replace is not None:
+            break
+        for type, value in trans.items():
+            if stream[i] == value:
+                if type == "transfer" and stream[i + 3] != stream[target]:
+                    replace = stream[i + 3]
+                    break
+                else:
+                    i += decrypt.OFFSETS[type]
+                    break
+    
+    stream[target] = replace
+
+    with open('task3.out', 'wb') as out_file:
+        out_file.write(bytes.fromhex(''.join(stream)))
